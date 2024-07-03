@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  cockroachdb:
+    image: cockroachdb/cockroach:v21.1.9
+    command: ["start-single-node", "--insecure", "--listen-addr=0.0.0.0:26257"]
+    ports:
+      - "26257:26257"
+      - "8080:8080"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: cockroachdb
+      DB_PORT: 26257
+      DB_USER: root
+      DB_PASSWORD: ""
+      DB_NAME: emp
+    depends_on:
+      - cockroachdb
