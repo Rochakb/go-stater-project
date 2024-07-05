@@ -3,7 +3,7 @@ version: '3.8'
 services:
   cockroachdb:
     image: cockroachdb/cockroach:v21.1.9
-    command: ["start-single-node", "--insecure", "--listen-addr=0.0.0.0:26257"]
+    command: [ "start-single-node", "--insecure", "--listen-addr=0.0.0.0:26257" ]
     ports:
       - "26257:26257"
       - "8080:8080"
@@ -13,7 +13,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8081:8081"
+      - "8000:8000"
     environment:
       DB_HOST: cockroachdb
       DB_PORT: 26257

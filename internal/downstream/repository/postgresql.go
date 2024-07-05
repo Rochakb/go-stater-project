@@ -5,19 +5,38 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/Rochakb/go-stater-project/internal/model"
+	_ "github.com/lib/pq"
+	"log"
+	"sync"
 )
 
-type PostgreSQLRepository struct {
+type PostgresSQLRepository struct {
 	db *sql.DB
 }
 
-func NewPostgreSQLRepository(db *sql.DB) *PostgreSQLRepository {
-	return &PostgreSQLRepository{
-		db: db,
+var (
+	pc   *sql.DB
+	lock *sync.Mutex = &sync.Mutex{}
+)
+
+func GetPostgresSQLRepositoryInstance(dbURI string) (Repository, error) {
+	lock.Lock()
+	defer lock.Unlock()
+
+	if pc != nil {
+
+		return &PostgresSQLRepository{pc}, nil
 	}
+
+	db, err := sql.Open("postgres", dbURI)
+	if err != nil {
+		log.Fatalf("failed to connect to PostgreSQL: %v", err)
+		return nil, err
+	}
+	return &PostgresSQLRepository{db: db}, nil
 }
 
-func (r *PostgreSQLRepository) GetEmployeeByID(ctx context.Context, empId int) (model.Employee, error) {
+func (r *PostgresSQLRepository) GetEmployeeByID(ctx context.Context, empId string) (model.Employee, error) {
 	query := `SELECT EmpId, Name, DOB, Department, Salary, BossId FROM Employee WHERE EmpId = $1`
 	row := r.db.QueryRowContext(ctx, query, empId)
 
@@ -32,7 +51,7 @@ func (r *PostgreSQLRepository) GetEmployeeByID(ctx context.Context, empId int) (
 	return employee, nil
 }
 
-func (r *PostgreSQLRepository) CreateEmployee(ctx context.Context, employee model.Employee) (bool, error) {
+func (r *PostgresSQLRepository) CreateEmployee(ctx context.Context, employee model.Employee) (bool, error) {
 	query := `
 		INSERT INTO Employee (empid, name, dob, department, salary, bossId)
 		VALUES ($1, $2, $3, $4, $5, $6)
@@ -45,7 +64,7 @@ func (r *PostgreSQLRepository) CreateEmployee(ctx context.Context, employee mode
 	return true, nil
 }
 
-func (r *PostgreSQLRepository) UpdateEmployee(ctx context.Context, empId int, employee model.Employee) (bool, error) {
+func (r *PostgresSQLRepository) UpdateEmployee(ctx context.Context, empId string, employee model.Employee) (bool, error) {
 	query := `
 		UPDATE Employee
 		SET name = $1, dob = $2, department = $3, salary = $4, bossId = $5
@@ -59,7 +78,7 @@ func (r *PostgreSQLRepository) UpdateEmployee(ctx context.Context, empId int, em
 	return true, nil
 }
 
-func (r *PostgreSQLRepository) DeleteEmployee(ctx context.Context, empId int) (bool, error) {
+func (r *PostgresSQLRepository) DeleteEmployee(ctx context.Context, empId string) (bool, error) {
 	query := `DELETE FROM Employee WHERE empid = $1`
 
 	_, err := r.db.ExecContext(ctx, query, empId)
