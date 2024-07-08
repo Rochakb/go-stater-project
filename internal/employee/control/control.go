@@ -20,6 +20,26 @@ func (c *EmployeeControl) Bind(ht *http.Transport, opts ...http.HandlerOption) {
 		handler.NewMakeGetEmployeeEndpointHandler(c.service),
 		handler.NewGetEmployeeEndpointHandlerOption(opts)...,
 	)
+	ht.PUT(
+		"/employee/create",
+		handler.NewMakeCreateEmployeeEndpointHandler(c.service),
+		handler.NewCreateEmployeeEndpointHandlerOption(opts)...,
+	)
+	ht.DELETE(
+		"/employee",
+		handler.NewMakeDeleteEmployeeEndpointHandler(c.service),
+		handler.NewDeleteEmployeeEndpointHandlerOption(opts)...,
+	)
+	ht.PUT(
+		"/employee/update",
+		handler.NewMakeUpdateEmployeeEndpointHandler(c.service),
+		handler.NewUpdateEmployeeEndpointHandlerOption(opts)...,
+	)
+	ht.POST(
+		"/employee/filter",
+		handler.NewMakeFilterEmployeeEndpointHandler(c.service),
+		handler.NewFilterEmployeeEndpointHandlerOption(opts)...,
+	)
 }
 
 func NewEmployeeControl(

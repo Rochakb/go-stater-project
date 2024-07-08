@@ -1,12 +1,14 @@
 package model
 
-import "database/sql"
+import (
+	"time"
+)
 
 type Employee struct {
-	EmployeeId int           `json:"empId"`
-	Name       string        `json:"name"`
-	DOB        string        `json:"dob"`
-	Department string        `json:"department"`
-	Salary     float64       `json:"salary"`
-	BossId     sql.NullInt64 `json:"bossId"`
+	EmpId      int       `json:"empId"`
+	Name       string    `json:"name"`
+	DOB        time.Time `json:"dob"`
+	Department string    `json:"department"`
+	Salary     float64   `json:"salary"`
+	BossId     int       `json:"bossId"`
 }

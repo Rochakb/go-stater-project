@@ -16,8 +16,8 @@ func (s *svc) GetEmployee(
 	resp, er := s.repository.GetEmployeeByID(ctx, empId)
 
 	if er != nil {
-		s.logger.Error("creating pg index",
-			log.String("service", "getEmployee"),
+		s.logger.Error("getting employee details",
+			log.String("service", "GetEmployee"),
 			log.String("err", er.Error()))
 		return nil, er
 	}

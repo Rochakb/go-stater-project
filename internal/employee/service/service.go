@@ -9,6 +9,10 @@ import (
 type (
 	Service interface {
 		GetEmployee(context.Context, interface{}) (interface{}, error)
+		CreateEmployee(context.Context, interface{}) (interface{}, error)
+		UpdateEmployee(context.Context, interface{}) (interface{}, error)
+		DeleteEmployee(context.Context, interface{}) (interface{}, error)
+		FilterEmployee(context.Context, interface{}) (interface{}, error)
 	}
 )
 
